@@ -25,10 +25,20 @@ open class iCimulatorFoundation: CALayer { //** MAIN CLASS **//
     private var stopWatch: StopWatch = StopWatch()
     private var recordingStartTime: CMTime?
     
+    private var _ipc: Any?
     @available(iOS 12 , *)
-    private lazy var ipc = InterProcessCommunicator()
-    
-    
+    private var ipc: InterProcessCommunicator {
+        get {
+            if _ipc == nil {
+                _ipc = InterProcessCommunicator()
+            }
+            return _ipc as! InterProcessCommunicator
+        }
+        set {
+            _ipc = newValue
+        }
+    }
+
     public override func layoutSublayers() {
         super.layoutSublayers()
         
