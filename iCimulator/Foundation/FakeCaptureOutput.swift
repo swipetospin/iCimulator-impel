@@ -105,6 +105,14 @@ open class FakeCapturePhotoOutput: _FakeCapturePhotoOutput {
     
 }
 
+open class FakeCaptureVideoDataOutput: FakeCaptureOutput {
+    
+    open func setSampleBufferDelegate(_ sampleBufferDelegate: AVCaptureVideoDataOutputSampleBufferDelegate?, queue sampleBufferCallbackQueue: DispatchQueue?) {
+        
+        // TODO: make periodical calls to imitate video record: sampleBufferDelegate.captureOutput(fake video data)
+    }
+}
+
 open class FakeCaptureFileOutput: FakeCaptureOutput {
     
     private var delegate: FakeCaptureFileOutputRecordingDelegate?
