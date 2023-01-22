@@ -83,7 +83,8 @@ open class iCimulatorFoundation: CALayer { //** MAIN CLASS **//
     
     private func generateVideoLayer(loop: Bool) {
         
-        guard let url = Bundle.main.url(forResource: "mockVideo01", withExtension: "mov")
+        let bundle = Bundle(for: type(of: self))
+        guard let url = bundle.url(forResource: "mockVideo01", withExtension: "mov")
         else {
             print("No video data")
             return
