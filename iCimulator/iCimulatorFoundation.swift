@@ -14,9 +14,6 @@ public typealias FakeCaptureVideoPreviewLayer = iCimulatorFoundation
 open class iCimulatorFoundation: CALayer { //** MAIN CLASS **//
     
     //-MARK: Original
-    private var previewType: PreviewType?
-    private var plistArgument: String?
-
     private var capturedImage: Data? = nil
     private var avPlayer: AVPlayerLooper?
     private var avQueuePlayer: AVQueuePlayer?
@@ -69,7 +66,6 @@ open class iCimulatorFoundation: CALayer { //** MAIN CLASS **//
     }
     
     private func setup() {
-        self.checkPreviewType()
         self.generateFakeLayer()
     }
     
@@ -78,53 +74,20 @@ open class iCimulatorFoundation: CALayer { //** MAIN CLASS **//
         self.fakeSession = session
     }
     
-    private func checkPreviewType() {
-        guard let plistPath = Bundle.main.path(forResource: "iCimulator", ofType:"plist") else { fatalError("Failed to read plist.") }
-        
-        do {
-            let data = try Data(contentsOf: URL(fileURLWithPath: plistPath))
-            let plist = try PropertyListDecoder().decode(iCimulatorPlist.self, from: data)
-            
-            self.previewType = PreviewType(rawValue: plist.Type)
-            self.plistArgument = plist.Argument
-            
-        } catch let e {
-            fatalError("Failed to read plist: \(e)")
-        }
-    }
 
     //-MARK: Generating Fake Layer
     private func generateFakeLayer() {
-        guard let previewType = self.previewType else { fatalError("Unknown Type. (written on iCimulator.plist)") }
         
-        switch previewType {
-        case .StaticImage:
-            self.generateStaticImageLayer()
-            
-        case .LoopedMovie:
-            self.generateVideoLayer(loop: true)
-            
-        case .NonLoopedMovie:
-            fatalError("Deprecated.")
-            
-        case .MacCamera:
-            self.generateMacCameraLayer()
-                    
-        case .Adhoc:
-            fatalError("iCimulator: Adhoc Mode has not been developed...")
-        }
-    }
-    
-    private func generateStaticImageLayer() {
-        guard let imagePath = plistArgument else { return }
-        guard let image = UIImage(contentsOfFile: imagePath) else { fatalError("Invalid image path.") }
-        
-        self.contents = image.cgImage
+        self.generateVideoLayer(loop: true)
     }
     
     private func generateVideoLayer(loop: Bool) {
-        guard let videoPath = plistArgument else { return }
-        let url = URL(fileURLWithPath: videoPath)
+        
+        guard let url = Bundle.main.url(forResource: "mockVideo01", withExtension: "mov")
+        else {
+            print("No video data")
+            return
+        }
         
         let playerItem = AVPlayerItem(asset: AVAsset(url: url))
         self.avQueuePlayer = AVQueuePlayer(playerItem: playerItem)
@@ -136,22 +99,6 @@ open class iCimulatorFoundation: CALayer { //** MAIN CLASS **//
         self.addSublayer(playerLayer!)
         self.avQueuePlayer!.play()
         //if loop { self.avPlayer!.automateLoop() }
-    }
-    
-    private func generateMacCameraLayer() {
-        if #available(iOS 12, *) {
-            self.ipc = InterProcessCommunicator()
-            self.ipc.connect() { [weak self] image in
-                DispatchQueue.main.async {
-                    guard let _ = self else { return }
-                    self!.contents = image.cgImage // Must be executed on main thread !
-                }
-            }
-        }
-        else {
-            // Fallback on earlier versions
-            fatalError("iCimulator: MacCamera Mode requires iOS 12.0")
-        }
     }
     
     
@@ -192,9 +139,12 @@ open class iCimulatorFoundation: CALayer { //** MAIN CLASS **//
         
         let skipLoopCount = floor((Double(interval) + recordingStartTime!.seconds - videoDuration) / videoDuration) //k
         let stopRecordPoint = videoDuration - (videoDuration * (skipLoopCount + 1) - recordingStartTime!.seconds ) //t2
-        
-        guard let videoPath = self.plistArgument else { return }
-        let videoUrl = URL(fileURLWithPath: videoPath)
+                
+        guard let videoUrl = Bundle.main.url(forResource: "mockVideo01", withExtension: "mov")
+        else {
+            print("No video data")
+            return
+        }
         
         let videoBlock1 = [recordingStartTime!.seconds, videoDuration]
         let videoBlock2 = [0.0, videoDuration]
@@ -272,70 +222,20 @@ open class iCimulatorFoundation: CALayer { //** MAIN CLASS **//
     
     //-MARK: Communicating Method
     internal func captureImage()-> Data {
-        guard let previewType = self.previewType else { fatalError("Unknown Type. (written on iCimulator.plist)") }
-        
-        switch previewType {
-        case .StaticImage:
-            return captureStaticImage()
-        case .LoopedMovie:
-            return captureVideo()
-        case .NonLoopedMovie:
-            fatalError("Deprecated.")
-        case .Adhoc:
-            fatalError("iCimulator: Adhoc Mode has not been developed...")
-        case .MacCamera:
-            return captureStaticImage()
-        }
-        
-        fatalError("iCimulator: Internal Error...")
+        return captureVideo()
     }
     
     internal func startRecording() {
-        guard let previewType = self.previewType else { fatalError("Unknown Type. (written on iCimulator.plist)") }
-        
-        switch previewType {
-        case .StaticImage:
-            stopWatch.start()
-        case .LoopedMovie:
-            stopWatch.start()
-            self.recordingStartTime = self.avQueuePlayer?.currentTime()
-        case .NonLoopedMovie:
-            fatalError("Deprecated.")
-        case .Adhoc:
-            fatalError("iCimulator: Adhoc Mode has not been developed...")
-        case .MacCamera:
-            if #available(iOS 12, *) {
-                ipc.startRecording()
-            } else {
-                // Fallback on earlier versions
-                fatalError("iCimulator: MacCamera Mode requires iOS 12.0")
-            }
-        }
+        stopWatch.start()
+        self.recordingStartTime = self.avQueuePlayer?.currentTime()
     }
     
     internal func stopRecording(_ completion: @escaping UrlFunction) {
-        if previewType == .MacCamera {
-            createVideoFromMacCamera(completion: completion)
-            return
-        }
         
         guard let interval = stopWatch.stop() else { fatalError("iCimulator: StopWatch is not working properly.") }
         let interval64 = Int(interval)
-        
-        switch previewType {
-        case .StaticImage:
-            convertStillImage2Video(interval64, completion: completion)
-        case .LoopedMovie:
-            shapeVideo(interval64, completion: completion)
-        case .NonLoopedMovie:
-            fatalError("Deprecated.")
-        case .Adhoc:
-            fatalError("iCimulator: Adhoc Mode has not been developed...")
-        case .none:
-            fatalError("iCimulator: Internal Error...")
-        case .MacCamera:
-            fatalError("iCimulator: Internal Error...")
-        }
+                
+        shapeVideo(interval64, completion: completion)
     }
 
     
