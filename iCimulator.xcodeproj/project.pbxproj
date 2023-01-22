@@ -31,7 +31,7 @@
 		8DF8B12B235DA9880080573E /* FakeCapturePhotoSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DF8B12A235DA9880080573E /* FakeCapturePhotoSettings.swift */; };
 		8DF8B12D235DDD740080573E /* _FakeCapturePhotoOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DF8B12C235DDD740080573E /* _FakeCapturePhotoOutput.swift */; };
 		8DF8B134235F0A130080573E /* InterProcessCommunicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DF8B133235F0A130080573E /* InterProcessCommunicator.swift */; };
-		9EB55F3E297D6B8200BA6DA0 /* mockVideo01.mov in Resources */ = {isa = PBXBuildFile; fileRef = 9EB55F3D297D6B8200BA6DA0 /* mockVideo01.mov */; };
+		9EB55F3E297D6B8200BA6DA0 /* mockVideo01.mov in Resources */ = {isa = PBXBuildFile; fileRef = 9EB55F3D297D6B8200BA6DA0 /* mockVideo01.mov */; settings = {ASSET_TAGS = (New, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -272,6 +272,9 @@
 		8D4C6A0923553DC800CF4E4E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				KnownAssetTags = (
+					New,
+				);
 				LastSwiftUpdateCheck = 1110;
 				LastUpgradeCheck = 1110;
 				ORGANIZATIONNAME = "Yuiga Wada";
