@@ -77,6 +77,14 @@ open class FakeCapturePhoto: _FakeCapturePhoto {
     public override func fileDataRepresentation()-> Data? {
         return capturedImage
     }
+    
+    public override func cgImageRepresentation() -> CGImage? {
+        if let capturedImg = capturedImage, let cgImageSource = CGImageSourceCreateWithData(capturedImg as CFData, nil) {
+            return CGImageSourceCreateImageAtIndex(cgImageSource, 0, nil)
+        }
+        
+        return nil
+    }
 }
 
 

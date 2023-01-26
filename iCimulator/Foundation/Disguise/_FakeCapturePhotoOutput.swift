@@ -115,7 +115,7 @@ open class _FakeCapturePhoto : NSObject {
     open func fileDataRepresentation() -> Data? {return nil}
     open func fileDataRepresentation(with customizer: FakeCapturePhotoFileDataRepresentationCustomizer) -> Data? {return nil}
     open func fileDataRepresentation(withReplacementMetadata replacementMetadOata: [String : Any]?, replacementEmbeddedThumbnailPhotoFormat: [String : Any]?, replacementEmbeddedThumbnailPixelBuffer: CVPixelBuffer?, replacementDepthData: AVDepthData?) -> Data? {return nil}
-    open func cgImageRepresentation() -> Unmanaged<CGImage>? {return nil}
+    open func cgImageRepresentation() -> CGImage? {return nil}
     open func previewCGImageRepresentation() -> Unmanaged<CGImage>? {return nil}
     
     open var bracketSettings: AVCaptureBracketedStillImageSettings?
