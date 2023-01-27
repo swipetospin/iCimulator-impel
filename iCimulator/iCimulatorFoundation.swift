@@ -65,6 +65,11 @@ open class iCimulatorFoundation: CALayer { //** MAIN CLASS **//
         setup()
     }
     
+    public override init(layer: Any) {
+        super.init(layer: (Any).self)
+        setup()
+    }
+    
     private func setup() {
         self.generateFakeLayer()
     }
