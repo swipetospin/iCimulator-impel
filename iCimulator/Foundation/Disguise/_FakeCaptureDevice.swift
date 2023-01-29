@@ -169,8 +169,8 @@ open class _FakeCaptureDevice : NSObject {
         open var isVideoStabilizationSupported: Bool = true
         open var videoMaxZoomFactor: CGFloat = 1.0
         open var videoZoomFactorUpscaleThreshold: CGFloat = 1.0
-        open var minExposureDuration: CMTime = CMTime(seconds: 1.0, preferredTimescale: .max)
-        open var maxExposureDuration: CMTime = CMTime(seconds: 1.0, preferredTimescale: .max)
+        open var minExposureDuration: CMTime = CMTime(value: 20, timescale: 1000000)
+        open var maxExposureDuration: CMTime = CMTime(value: 1, timescale: 3)
         open var minISO: Float = 1.0
         open var maxISO: Float = 10
         open var isGlobalToneMappingSupported: Bool = true
