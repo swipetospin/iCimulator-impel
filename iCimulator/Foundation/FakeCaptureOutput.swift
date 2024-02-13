@@ -119,6 +119,9 @@ open class FakeCaptureVideoDataOutput: FakeCaptureOutput {
         
         // TODO: make periodical calls to imitate video record: sampleBufferDelegate.captureOutput(fake video data)
     }
+    
+    open var alwaysDiscardsLateVideoFrames: Bool = false
+    open var videoSettings: [String: Any?] = [:]
 }
 
 open class FakeCaptureFileOutput: FakeCaptureOutput {
