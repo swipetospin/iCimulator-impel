@@ -120,6 +120,10 @@ open class FakeCaptureVideoDataOutput: FakeCaptureOutput {
         // TODO: make periodical calls to imitate video record: sampleBufferDelegate.captureOutput(fake video data)
     }
     
+    open func recommendedVideoSettingsForAssetWriter(writingTo outputFileType: AVFileType) -> [String : Any]? {
+        return nil
+    }
+    
     open var alwaysDiscardsLateVideoFrames: Bool = false
     open var videoSettings: [String: Any?] = [:]
 }

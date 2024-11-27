@@ -160,7 +160,7 @@ open class _FakeCaptureDevice : NSObject {
     }
     open class Format : NSObject {
         open var mediaType: AVMediaType = .video
-        open var formatDescription: CMFormatDescription? = nil
+        open var formatDescription: CMFormatDescription! = nil
         open var videoSupportedFrameRateRanges: [AVFrameRateRange] = [AVFrameRateRange()]
         open var videoFieldOfView: Float = 1.0
         open var isVideoBinned: Bool = true
